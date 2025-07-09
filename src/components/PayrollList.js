@@ -232,6 +232,7 @@ function PayrollList({ setFetchRecords }) {
               <th style={styles.th}>Emp Code</th>
               <th style={styles.th}>Name</th>
               <th style={styles.th}>Department</th>
+              <th style={styles.th}>Designation</th> {/* ✅ Added */}
               <th style={styles.th}>Salary</th>
               <th style={styles.th}>Status</th>
               <th style={styles.th}>Actions</th>
@@ -243,6 +244,7 @@ function PayrollList({ setFetchRecords }) {
                 <td style={styles.td}>{record.emp_code}</td>
                 <td style={styles.td}>{record.emp_name}</td>
                 <td style={styles.td}>{record.department}</td>
+                <td style={styles.td}>{record.designation}</td> {/* ✅ Added */}
                 <td style={styles.td}>₹{record.total_salary}</td>
                 <td style={styles.td}>{record.is_active ? 'Active' : 'Inactive'}</td>
                 <td style={styles.td}>

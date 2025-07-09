@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const initialState = {
-  emp_code: '', emp_name: '', department: '', designation: '', category: '',
+  Emp_code: '', Emp_name: '', department: '', designation: '', category: '',
   basic_salary: '', da: '', hra: '', conveyance: '', special_allowance: '', dp: '',
   lop: '', advance: '', personal_bill: '', other_deduction: '', arrears: '', overtime: '',
   remarks: '', is_active: false, medical_deduction: '', loan: ''
@@ -12,7 +12,6 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
   const [calculatedSalary, setCalculatedSalary] = useState(null);
   const [error, setError] = useState(null);
 
-  // Hardcoded dropdown options
   const departments = ['Accounts', 'Administration', 'Marketing', 'HR'];
   const designations = ['Manager', 'Account Officer', 'Purchase Manager'];
 
@@ -130,27 +129,6 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
               );
             }
 
-            if (key === 'designation') {
-              return (
-                <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '6px', fontWeight: 600 }}>
-                    Designation
-                  </label>
-                  <select
-                    name={key}
-                    value={formData[key] || ''}
-                    onChange={handleChange}
-                    style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
-                  >
-                    <option value="">Select Designation</option>
-                    {designations.map((d) => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
-                  </select>
-                </div>
-              );
-            }
-
             if (key === 'department') {
               return (
                 <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -165,6 +143,27 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
                   >
                     <option value="">Select Department</option>
                     {departments.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
+
+            if (key === 'designation') {
+              return (
+                <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: '6px', fontWeight: 600 }}>
+                    Designation
+                  </label>
+                  <select
+                    name={key}
+                    value={formData[key] || ''}
+                    onChange={handleChange}
+                    style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
+                  >
+                    <option value="">Select Designation</option>
+                    {designations.map((d) => (
                       <option key={d} value={d}>{d}</option>
                     ))}
                   </select>
