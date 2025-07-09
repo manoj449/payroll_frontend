@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useState, useEffect, useCallback } from 'react';
+
 import jsPDF from 'jspdf';
 import PayrollForm from './PayrollForm';
 
@@ -159,7 +161,7 @@ function PayrollList({ setFetchRecords }) {
 
   useEffect(() => {
     fetchRecords();
-    setFetchRecords(() => fetchRecords);
+   setFetchRecords(() => fetchRecords);
   }, [setFetchRecords, month, year, status]);
 
   const handleDelete = async (id) => {
