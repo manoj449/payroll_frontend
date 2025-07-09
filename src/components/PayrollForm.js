@@ -1,89 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
-function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
-  const initialState = {
-    emp_code: '',
-    emp_name: '',
-    department: '',
-    designation: '',
-    category: '',
-    basic_salary: '',
-    da: '',
-    hra: '',
-    conveyance: '',
-    special_allowance: '',
-    dp: '',
-    lop: '',
-    advance: '',
-    personal_bill: '',
-    other_deduction: '',
-    arrears: '',
-    overtime: '',
-    remarks: '',
-    is_active: false,
-    medical_deduction: '', // Added to match PayrollList.js
-    loan: '', // Added to match PayrollList.js
-  };
+const initialState = {
+  emp_code: '', emp_name: '', department: '', designation: '', category: '',
+  basic_salary: '', da: '', hra: '', conveyance: '', special_allowance: '', dp: '',
+  lop: '', advance: '', personal_bill: '', other_deduction: '', arrears: '', overtime: '',
+  remarks: '', is_active: false, medical_deduction: '', loan: ''
+};
 
+function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
   const [formData, setFormData] = useState(initialState);
   const [calculatedSalary, setCalculatedSalary] = useState(null);
   const [error, setError] = useState(null);
-  const [designations, setDesignations] = useState([]);
-  const [departments, setDepartments] = useState([]);
+
+  // Hardcoded dropdown options
+  const departments = ['Accounts', 'Administration', 'Marketing', 'HR'];
+  const designations = ['Manager', 'Account Officer', 'Purchase Manager'];
 
   useEffect(() => {
-    const fetchDesignations = async () => {
-      try {
-        const res = await fetch('https://backendpayroll-production.up.railway.app/api/cd_dcd?typecd=2');
-        if (!res.ok) throw new Error(`Failed to fetch designations: ${res.status}`);
-        const data = await res.json();
-        setDesignations(data.map(item => ({ code: item.code, dcd: item.dcd })));
-      } catch (err) {
-        console.error('Error fetching designations:', err);
-        setError(`Error fetching designations: ${err.message}`);
-      }
-    };
-
-    const fetchDepartments = async () => {
-      try {
-        const res = await fetch('https://backendpayroll-production.up.railway.app/api/cd_dcd?typecd=1');
-        if (!res.ok) throw new Error(`Failed to fetch departments: ${res.status}`);
-        const data = await res.json();
-        setDepartments(data.map(item => ({ code: item.code, dcd: item.dcd })));
-      } catch (err) {
-        console.error('Error fetching departments:', err);
-        setError(`Error fetching departments: ${err.message}`);
-      }
-    };
-
-    fetchDesignations();
-    fetchDepartments();
-
     if (recordToEdit) {
-      console.log('Editing payroll:', recordToEdit);
-      setFormData({
-        emp_code: recordToEdit.emp_code || '',
-        emp_name: recordToEdit.emp_name || '',
-        department: recordToEdit.department || '',
-        designation: recordToEdit.designation || '',
-        category: recordToEdit.category || '',
-        basic_salary: recordToEdit.basic_salary || '',
-        da: recordToEdit.da || '',
-        hra: recordToEdit.hra || '',
-        conveyance: recordToEdit.conveyance || '',
-        special_allowance: recordToEdit.special_allowance || '',
-        dp: recordToEdit.dp || '',
-        lop: recordToEdit.lop || '',
-        advance: recordToEdit.advance || '',
-        personal_bill: recordToEdit.personal_bill || '',
-        other_deduction: recordToEdit.other_deduction || '',
-        arrears: recordToEdit.arrears || '',
-        overtime: recordToEdit.overtime || '',
-        remarks: recordToEdit.remarks || '',
-        is_active: !!recordToEdit.is_active,
-        medical_deduction: recordToEdit.medical_deduction || '',
-        loan: recordToEdit.loan || '',
-      });
+      setFormData({ ...initialState, ...recordToEdit, is_active: !!recordToEdit.is_active });
       setCalculatedSalary(recordToEdit.total_salary || null);
     } else {
       setFormData(initialState);
@@ -91,117 +26,36 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
     }
   }, [recordToEdit]);
 
-  const styles = {
-    container: {
-      maxWidth: '900px',
-      margin: '30px auto',
-      padding: '30px',
-      background: '#fff',
-      borderRadius: '8px',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-    },
-    title: {
-      textAlign: 'center',
-      marginBottom: '30px',
-      color: '#333',
-    },
-    grid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '20px',
-    },
-    group: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    label: {
-      marginBottom: '6px',
-      fontWeight: 600,
-      color: '#444',
-      textTransform: 'capitalize',
-    },
-    input: {
-      padding: '8px 10px',
-      border: '1px solid #ccc',
-      borderRadius: '6px',
-      fontSize: '14px',
-    },
-    select: {
-      padding: '8px 10px',
-      border: '1px solid #ccc',
-      borderRadius: '6px',
-      fontSize: '14px',
-    },
-    checkboxGroup: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    checkboxLabel: {
-      marginRight: '10px',
-    },
-    actions: {
-      display: 'flex',
-      justifyContent: 'center',
-      gap: '20px',
-      marginTop: '30px',
-    },
-    button: {
-      padding: '10px 25px',
-      fontSize: '14px',
-      backgroundColor: '#0066cc',
-      border: 'none',
-      color: 'white',
-      borderRadius: '5px',
-      cursor: 'pointer',
-    },
-    buttonCancel: {
-      backgroundColor: '#dc3545',
-    },
-    result: {
-      marginTop: '20px',
-      textAlign: 'center',
-      fontWeight: 'bold',
-      color: 'green',
-    },
-    error: {
-      marginTop: '20px',
-      textAlign: 'center',
-      color: 'red',
-    },
-  };
-
   const numericFields = [
     'basic_salary', 'da', 'hra', 'conveyance', 'special_allowance', 'dp',
     'lop', 'advance', 'personal_bill', 'other_deduction', 'arrears', 'overtime',
-    'medical_deduction', 'loan',
+    'medical_deduction', 'loan'
   ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   const calculateSalary = () => {
     const earnings = numericFields.reduce((sum, key) => {
-      if (['lop', 'advance', 'personal_bill', 'other_deduction', 'medical_deduction', 'loan'].includes(key)) {
-        return sum;
+      if (!['lop', 'advance', 'personal_bill', 'other_deduction', 'medical_deduction', 'loan'].includes(key)) {
+        sum += parseFloat(formData[key] || 0);
       }
-      return sum + parseFloat(formData[key] || 0);
+      return sum;
     }, 0);
 
     const deductions = numericFields.reduce((sum, key) => {
-      if (!['lop', 'advance', 'personal_bill', 'other_deduction', 'medical_deduction', 'loan'].includes(key)) {
-        return sum;
+      if (['lop', 'advance', 'personal_bill', 'other_deduction', 'medical_deduction', 'loan'].includes(key)) {
+        sum += parseFloat(formData[key] || 0);
       }
-      return sum + parseFloat(formData[key] || 0);
+      return sum;
     }, 0);
 
-    const total = earnings - deductions;
-    console.log('Calculated salary:', total);
-    setCalculatedSalary(total);
+    setCalculatedSalary(earnings - deductions);
   };
 
   const handleSubmit = async (e) => {
@@ -215,8 +69,6 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
 
     try {
       const payload = { ...formData, total_salary: calculatedSalary };
-      console.log('Submitting payload:', payload);
-
       const url = recordToEdit
         ? `https://backendpayroll-production.up.railway.app/api/payroll/${recordToEdit.id}`
         : 'https://backendpayroll-production.up.railway.app/api/payroll';
@@ -230,42 +82,48 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || `Failed to save: ${res.statusText}`);
+        throw new Error(errorData.error || 'Save failed.');
       }
-
-      const result = await res.json();
-      console.log('Backend response:', result);
 
       setFormData(initialState);
       setCalculatedSalary(null);
-      if (onCancel) onCancel();
-      if (fetchRecords) {
-        await fetchRecords();
-      }
+      onCancel?.();
+      fetchRecords?.();
     } catch (err) {
-      console.error('Error saving:', err);
-      setError(`Error saving record: ${err.message}. Please check the server logs for details.`);
+      setError(`Error saving record: ${err.message}`);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>
+    <div style={{
+      maxWidth: '900px',
+      margin: '30px auto',
+      padding: '30px',
+      background: '#fff',
+      borderRadius: '8px',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+    }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#333' }}>
         {recordToEdit ? 'Edit Payroll' : 'Employee Payroll Form'}
       </h2>
+
       <form onSubmit={handleSubmit}>
-        <div style={styles.grid}>
-          {Object.entries(initialState).map(([key, _]) => {
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px'
+        }}>
+          {Object.keys(initialState).map((key) => {
             if (key === 'is_active') {
               return (
-                <div key={key} style={{ ...styles.group, ...styles.checkboxGroup }}>
-                  <label style={{ ...styles.label, ...styles.checkboxLabel }}>
+                <div key={key} style={{ display: 'flex', alignItems: 'center' }}>
+                  <label style={{ marginRight: '10px', fontWeight: 600 }}>
                     {key.replace(/_/g, ' ')}
                   </label>
                   <input
                     type="checkbox"
-                    name="is_active"
-                    checked={formData.is_active}
+                    name={key}
+                    checked={formData[key]}
                     onChange={handleChange}
                   />
                 </div>
@@ -274,19 +132,19 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
 
             if (key === 'designation') {
               return (
-                <div key={key} style={styles.group}>
-                  <label style={styles.label}>{key.replace(/_/g, ' ')}</label>
+                <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: '6px', fontWeight: 600 }}>
+                    Designation
+                  </label>
                   <select
                     name={key}
                     value={formData[key] || ''}
                     onChange={handleChange}
-                    style={styles.select}
+                    style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
                   >
                     <option value="">Select Designation</option>
-                    {designations.map((des) => (
-                      <option key={des.code} value={des.dcd}>
-                        {des.dcd}
-                      </option>
+                    {designations.map((d) => (
+                      <option key={d} value={d}>{d}</option>
                     ))}
                   </select>
                 </div>
@@ -295,19 +153,19 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
 
             if (key === 'department') {
               return (
-                <div key={key} style={styles.group}>
-                  <label style={styles.label}>{key.replace(/_/g, ' ')}</label>
+                <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: '6px', fontWeight: 600 }}>
+                    Department
+                  </label>
                   <select
                     name={key}
                     value={formData[key] || ''}
                     onChange={handleChange}
-                    style={styles.select}
+                    style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
                   >
                     <option value="">Select Department</option>
-                    {departments.map((dept) => (
-                      <option key={dept.code} value={dept.dcd}>
-                        {dept.dcd}
-                      </option>
+                    {departments.map((d) => (
+                      <option key={d} value={d}>{d}</option>
                     ))}
                   </select>
                 </div>
@@ -315,25 +173,35 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
             }
 
             return (
-              <div key={key} style={styles.group}>
-                <label style={styles.label}>{key.replace(/_/g, ' ')}</label>
+              <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '6px', fontWeight: 600 }}>
+                  {key.replace(/_/g, ' ')}
+                </label>
                 <input
                   type={numericFields.includes(key) ? 'number' : 'text'}
                   name={key}
                   value={formData[key]}
                   onChange={handleChange}
-                  style={styles.input}
                   step={numericFields.includes(key) ? '0.01' : undefined}
+                  style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
                 />
               </div>
             );
           })}
         </div>
-        <div style={styles.actions}>
-          <button type="button" onClick={calculateSalary} style={styles.button}>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px' }}>
+          <button
+            type="button"
+            onClick={calculateSalary}
+            style={{ padding: '10px 25px', backgroundColor: '#0066cc', color: '#fff', borderRadius: '5px', border: 'none' }}
+          >
             Calculate
           </button>
-          <button type="submit" style={styles.button}>
+          <button
+            type="submit"
+            style={{ padding: '10px 25px', backgroundColor: '#0066cc', color: '#fff', borderRadius: '5px', border: 'none' }}
+          >
             {recordToEdit ? 'Update' : 'Save'}
           </button>
           <button
@@ -341,17 +209,24 @@ function PayrollForm({ fetchRecords, recordToEdit, onCancel }) {
             onClick={() => {
               setFormData(initialState);
               setCalculatedSalary(null);
-              if (onCancel) onCancel();
+              onCancel?.();
             }}
-            style={{ ...styles.button, ...styles.buttonCancel }}
+            style={{ padding: '10px 25px', backgroundColor: '#dc3545', color: '#fff', borderRadius: '5px', border: 'none' }}
           >
             Cancel
           </button>
         </div>
+
         {calculatedSalary !== null && (
-          <p style={styles.result}>Calculated Total Salary: ₹{calculatedSalary}</p>
+          <p style={{ marginTop: '20px', textAlign: 'center', color: 'green', fontWeight: 'bold' }}>
+            Calculated Total Salary: ₹{calculatedSalary}
+          </p>
         )}
-        {error && <p style={styles.error}>{error}</p>}
+        {error && (
+          <p style={{ marginTop: '20px', textAlign: 'center', color: 'red' }}>
+            {error}
+          </p>
+        )}
       </form>
     </div>
   );

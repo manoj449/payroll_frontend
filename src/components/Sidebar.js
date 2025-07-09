@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-function Sidebar() {
+function Sidebar({ isOpen, toggleSidebar }) {
   const styles = {
     sidebar: {
       width: '250px',
@@ -11,10 +11,11 @@ function Sidebar() {
       height: '100vh',
       position: 'fixed',
       top: 0,
-      left: 0,
+      left: isOpen ? '0' : '-260px', // slide effect
+      transition: 'left 0.3s ease-in-out',
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px',
+      zIndex: 1000,
     },
     title: {
       fontSize: '24px',
@@ -28,36 +29,53 @@ function Sidebar() {
       padding: '10px 15px',
       borderRadius: '5px',
       fontSize: '16px',
-      transition: 'background 0.3s',
     },
     activeLink: {
       background: '#3498db',
       color: '#fff',
     },
-    navLinkHover: {
-      background: '#34495e',
+    toggleButton: {
+      display: 'none',
+      position: 'absolute',
+      top: 15,
+      left: 15,
+      fontSize: '24px',
+      background: 'transparent',
+      color: '#fff',
+      border: 'none',
+      cursor: 'pointer',
+    },
+    closeBtn: {
+      display: 'block',
+      background: 'transparent',
+      color: '#fff',
+      fontSize: '20px',
+      alignSelf: 'flex-end',
+      border: 'none',
+      marginBottom: '20px',
+      cursor: 'pointer',
+    },
+
+    // For mobile only
+    '@media (maxWidth: 768px)': {
+      toggleButton: {
+        display: 'block',
+      },
     },
   };
 
   return (
     <div style={styles.sidebar}>
+      <button onClick={toggleSidebar} style={styles.closeBtn}>✖</button>
       <h2 style={styles.title}>Payroll System</h2>
-      <NavLink
-        to="/"
-        style={({ isActive }) => ({
-          ...styles.navLink,
-          ...(isActive ? styles.activeLink : {}),
-        })}
-      >
+      <NavLink to="/" style={({ isActive }) => ({
+        ...styles.navLink, ...(isActive ? styles.activeLink : {})
+      })}>
         Employee Payroll Form
       </NavLink>
-      <NavLink
-        to="/records"
-        style={({ isActive }) => ({
-          ...styles.navLink,
-          ...(isActive ? styles.activeLink : {}),
-        })}
-      >
+      <NavLink to="/records" style={({ isActive }) => ({
+        ...styles.navLink, ...(isActive ? styles.activeLink : {})
+      })}>
         View Payroll Records
       </NavLink>
     </div>
